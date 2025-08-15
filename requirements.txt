@@ -5,3 +5,4 @@ langchain-community
 transformers
 langchain_huggingface
 streamlit
+langgraph-checkpoint-sqlite
