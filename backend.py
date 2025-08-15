@@ -9,10 +9,13 @@ from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 
 load_dotenv()
+
+
+
 llm = HuggingFaceEndpoint(
     repo_id="mistralai/Mistral-7B-Instruct-v0.2",
     task="conversational",  # important for chat models
-    huggingfacehub_api_token="huggingface_api"
+    huggingfacehub_api="huggingface_api"
 )
 
 model = ChatHuggingFace(llm=llm)
