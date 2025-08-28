@@ -1,0 +1,20 @@
+1) st.chat_input('Type here') take input. 
+st.chat_message('role') checks if there are any message for the role,
+ if yes print in ui by st.text(user_input)
+
+2) CONFIG = {'configurable': {'thread_id': 'thread-1'}}- maintain a temporary memory to remember previous chat.
+
+3) if 'message_history' not in st.session_state:
+    st.session_state['message_history'] = []
+this is is a streamlit list that holds previous chat, by 
+st.session_state['message_history'].append({'role': 'user', 'content': user_input})
+and
+st.session_state['message_history'].append({'role': 'assistant', 'content': ai_message})
+normal list is volatile in each enter.so st.session sate needed to be used.
+
+
+4)# loading the conversation history
+for message in st.session_state['message_history']:
+    with st.chat_message(message['role']):
+        st.text(message['content'])
+this is just showing previous chats up down way in ui. or else, only a user-ai msg pair will be shownin ui

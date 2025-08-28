@@ -1,0 +1,4 @@
+without stream llm call with with user meassahe is by invoke
+    response = chatbot.invoke({'messages': [HumanMessage(content=user_input)]}, config=CONFIG)
+in syteaming the call is by stream
+it prints output in loop

@@ -1,0 +1,25 @@
+Till now we are using checkpoint-InMemorySaver() as persistance memory, which is ram. And all past threads lost whenever refresh. 
+Using a sqlite memory here
+
+1) langgraph.checkpoint.sqlite install
+2) in backend ->
+    conn = sqlite3.connect(database='chatbot.db', check_same_thread=False)
+    # Checkpointer
+    checkpointer = SqliteSaver(conn=conn)
+it creates chatbot.db and stores chatbcorresponding to thread_id
+
+   
+def retrieve_all_threads():
+    all_threads = set()
+    for checkpoint in checkpointer.list(None):
+        all_threads.add(checkpoint.config['configurable']['thread_id'])
+    return list(all_threads)
+
+3) in frondend->
+      in Session Setup section->
+      instead  #this creating empty list of threads when first time ui page opening 
+        if 'chat_threads' not in st.session_state:
+         st.session_state['chat_threads'] = []
+        do #this will retrieve all threads saved in sqlite db
+        if 'chat_threads' not in st.session_state:
+            st.session_state['chat_threads'] = retrieve_all_threads()

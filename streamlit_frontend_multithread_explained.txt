@@ -1,0 +1,91 @@
+#for resumable multithread ui
+1) sidebar with title+ start chat button+ a title named my conversation to show past chats herading link
+st.sidebar.title('LangGraph Chatbot')
+st.sidebar.button('New Chat')
+st.sidebar.header('My Conversations')
+
+2)create automatic thread id (manual till now) and aadding to session
+import uuid
+def generate_thread_id():
+    thread_id = uuid.uuid4()
+    return thread_id
+if 'thread_id' not in st.session_state:
+    st.session_state['thread_id'] = generate_thread_id()
+CONFIG = {'configurable': {'thread_id': st.session_state['thread_id']}}
+
+3)display the current thread_id in sidebar
+st.sidebar.button(str(st.session_state['thread_id']))
+
+4)on click of "new chat", open a new chat window
+         -generate a new thread id
+         -save it in session
+         -reset meassage_history list to save all user-ai conversation freshly
+    def reset_chat():
+     thread_id = generate_thread_id()
+     st.session_state['thread_id'] = thread_id
+     st.session_state['message_history'] = []
+    in sidebar->
+    if st.sidebar.button('New Chat'):
+     reset_chat()
+!! but here old chat threads are lost , not showing in side bar also.
+
+5) create a list to store all thread ids
+   list name would be "chat_threads"
+   def add_thread(thread_id):
+    if thread_id not in st.session_state['chat_threads']:
+        st.session_state['chat_threads'].append(thread_id)
+   at session setup-> #whenever first time ui page will be open
+      if 'chat_threads' not in st.session_state:
+       st.session_state['chat_threads'] = []
+      add_thread(st.session_state['thread_id'])
+  at reset_chat function -> #whenever new chat will be cliked
+    def reset_chat():
+      thread_id = generate_thread_id()
+      st.session_state['thread_id'] = thread_id
+      add_thread(st.session_state['thread_id'])
+      st.session_state['message_history'] = []
+
+6) show all thread_ids in sidebar
+    in side bar instead
+     st.sidebar.button(str(st.session_state['thread_id']))
+    do
+    for thread_id in st.session_state['chat_threads'][::-1]:
+     st.sidebar.button(str(thread_id))
+
+7) on click ofa perticularthread_id, cobnversation related to the thtead wiil be shown in display
+   - restore chatof a given thread_id
+    def load_conversation(thread_id):
+     return chatbot.get_state(config={'configurable': {'thread_id': thread_id}}).values['messages']
+
+    at sidebar->
+    instead doing 
+       for thread_id in st.session_state['chat_threads'][::-1]:
+         st.sidebar.button(str(thread_id))
+
+    do (retrieve chats corresponding to thread_id and save it in current message_history  )
+    for thread_id in st.session_state['chat_threads'][::-1]:
+     if st.sidebar.button(str(thread_id)):
+        st.session_state['thread_id'] = thread_id
+        messages = load_conversation(thread_id)
+
+        temp_messages = []
+
+        for msg in messages:
+            if isinstance(msg, HumanMessage):
+                role='user'
+            else:
+                role='assistant'
+            temp_messages.append({'role': role, 'content': msg.content})
+        st.session_state['message_history'] = temp_messages
+    *********************************************************************************
+   - show the message history in ui (as usual)
+    # loading the conversation history
+    for message in st.session_state['message_history']:
+     with st.chat_message(message['role']):
+        st.text(message['content'])
+
+8) rename raw chat_thread with a relatABle name
+   in streamlit_frontend_multithread1.py
+    
+
+    
