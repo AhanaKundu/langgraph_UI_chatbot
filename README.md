@@ -10,6 +10,8 @@ LangGraph-powered conversation flow with memory persistence.
 
 Streamlit UI for an easy, web-based chat interface.
 
-Short-term memory to retain context during ongoing chats.
+SQLITE  memory to retain context of previous chats.
+
+Included multi-tool facility in chatbot workflow
 
 Simple, modular backend for easy model swapping (supports Hugging Face models).
